@@ -1,5 +1,5 @@
 {
-  "name": "@pulse/lint",
+  "name": "@pulse-kit/lint",
   "version": "1.0.0",
   "description": "Pulse linting and formatting configs",
   "license": "GPL-3.0-only",
@@ -18,7 +18,9 @@
     "/NOTICE",
     "/docs/preset-comparison.md",
     "/docs/toolchain-upgrade.md",
-    "/docs/unsupported-legacy-rules.json"
+    "/docs/unsupported-legacy-rules.json",
+    "/CHANGELOG.md",
+    "/docs/releasing.md"
   ],
   "type": "module",
   "exports": {
@@ -43,13 +45,14 @@
     "./oxlint/overlays/strict": "./dist/oxlint/overlays/strict.json"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "scripts": {
     "build": "node scripts/clean-dist.ts && tsc -p tsconfig.build.json && node scripts/prepare-dist.ts",
     "prepack": "yarn build",
     "typecheck": "tsc -p tsconfig.dev.json",
-    "test": "yarn build && yarn typecheck && yarn lint && yarn test:cli && yarn test:import-order && yarn test:native && yarn test:profiles && yarn test:strict && yarn test:app && yarn test:package",
+    "test": "yarn build && yarn typecheck && yarn lint && yarn test:cli && yarn test:import-order && yarn test:native && yarn test:profiles && yarn test:strict && yarn test:app && yarn test:package && yarn test:release",
     "test:import-order": "node ./test/import-order.test.ts",
     "test:native": "node --test ./test/native-lint.test.ts ./test/native-review.test.ts ./test/compiler-rules.test.ts",
     "test:strict": "node --test ./test/strict-lint.test.ts",
@@ -63,7 +66,11 @@
     "commitlint": "commitlint --config ./dist/commitlint/index.js",
     "lefthook:install": "lefthook install",
     "test:profiles": "node --test ./test/profiles.test.ts",
-    "test:cli": "node --test ./test/cli.test.ts"
+    "test:cli": "node --test ./test/cli.test.ts",
+    "changeset": "changeset",
+    "version:packages": "changeset version && yarn install --mode=skip-build && oxfmt -c oxfmt/index.json package.json CHANGELOG.md .changeset",
+    "audit:dependencies": "yarn npm audit --all --recursive --severity high",
+    "test:release": "node --test ./test/release-plan.test.ts ./test/release-version.test.ts"
   },
   "dependencies": {
     "@commitlint/cli": "21.2.3",
@@ -77,6 +84,7 @@
     "oxlint-tsgolint": "7.0.2003"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.3",
     "@commitlint/types": "21.2.3",
     "@types/eslint": "9.6.1",
     "@types/estree": "1.0.9",

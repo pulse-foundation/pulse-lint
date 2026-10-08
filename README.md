@@ -1,4 +1,4 @@
-# @pulse/lint
+# @pulse-kit/lint
 
 Shared Pulse linting and formatting presets, extracted from Pulse Chat. Includes
 Oxlint, Oxfmt, React Native checks, Commitlint and an optional Lefthook preset.
@@ -20,31 +20,34 @@ yarn add --dev /tmp/pulse-lint.tgz
 ```
 
 After a release is published to your chosen registry, consumers can install
-`@pulse/lint` by version using `yarn add --dev @pulse/lint@<version>`. The
+`@pulse-kit/lint` by version using `yarn add --dev @pulse-kit/lint@<version>`. The
 included hook preset expects Yarn's `nodeLinker: node-modules`.
-The package requests restricted registry access; publishing is a separate manual step.
+The package is configured for public npm access. Changesets prepares release PRs;
+CI stages a tested archive and a maintainer approves publication with 2FA.
+See [the release guide](docs/releasing.md) for setup, security controls and the
+current vulnerability blocker. Nothing has been published by these local changes.
 
 ## Presets
 
 One package provides rule modules, complete environment profiles and a reusable
 strict policy overlay. Preset names below resolve through package exports; JSON
-`extends` uses the corresponding physical file under `node_modules/@pulse/lint`.
+`extends` uses the corresponding physical file under `node_modules/@pulse-kit/lint`.
 
-| Export                                                                                                         | Purpose                                                                              |
-| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `@pulse/lint/oxlint`                                                                                           | Default web profile; see migration notes below                                       |
-| `@pulse/lint/oxlint/base`                                                                                      | Shared JS/TS, imports and naming rules without React, a11y or Node plugin rules      |
-| `@pulse/lint/oxlint/web`                                                                                       | Explicit web/React profile, equivalent to the default                                |
-| `@pulse/lint/oxlint/server`                                                                                    | Base plus Node rules and environment; rejects `window` and `document`                |
-| `@pulse/lint/oxlint/strict`                                                                                    | Compatible strict web profile: web + strict overlay                                  |
-| `@pulse/lint/oxlint/server-strict`                                                                             | Server + strict overlay                                                              |
-| `@pulse/lint/oxlint/overlays/strict`                                                                           | Framework-neutral 220-line file / 80-line function limits and test exemptions        |
-| `@pulse/lint/oxlint/native`                                                                                    | React Native, type-aware checks, React Compiler and Pulse boundaries                 |
-| `@pulse/lint/oxlint/typescript`, `/react`, `/react-a11y`, `/node`, `/imports`, `/variables`, `/best-practices` | Rule modules for composition; these are not complete project profiles                |
-| `@pulse/lint/oxfmt`                                                                                            | Single quotes and grouped import sorting                                             |
-| `@pulse/lint/tsconfig`                                                                                         | Standalone strict TypeScript base; consumers provide includes, JSX and runtime types |
-| `@pulse/lint/commitlint`                                                                                       | Conventional commit configuration                                                    |
-| `@pulse/lint/lefthook`                                                                                         | Optional staged-file formatting/linting and commit-message checks                    |
+| Export                                                                                                             | Purpose                                                                              |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `@pulse-kit/lint/oxlint`                                                                                           | Default web profile; see migration notes below                                       |
+| `@pulse-kit/lint/oxlint/base`                                                                                      | Shared JS/TS, imports and naming rules without React, a11y or Node plugin rules      |
+| `@pulse-kit/lint/oxlint/web`                                                                                       | Explicit web/React profile, equivalent to the default                                |
+| `@pulse-kit/lint/oxlint/server`                                                                                    | Base plus Node rules and environment; rejects `window` and `document`                |
+| `@pulse-kit/lint/oxlint/strict`                                                                                    | Compatible strict web profile: web + strict overlay                                  |
+| `@pulse-kit/lint/oxlint/server-strict`                                                                             | Server + strict overlay                                                              |
+| `@pulse-kit/lint/oxlint/overlays/strict`                                                                           | Framework-neutral 220-line file / 80-line function limits and test exemptions        |
+| `@pulse-kit/lint/oxlint/native`                                                                                    | React Native, type-aware checks, React Compiler and Pulse boundaries                 |
+| `@pulse-kit/lint/oxlint/typescript`, `/react`, `/react-a11y`, `/node`, `/imports`, `/variables`, `/best-practices` | Rule modules for composition; these are not complete project profiles                |
+| `@pulse-kit/lint/oxfmt`                                                                                            | Single quotes and grouped import sorting                                             |
+| `@pulse-kit/lint/tsconfig`                                                                                         | Standalone strict TypeScript base; consumers provide includes, JSX and runtime types |
+| `@pulse-kit/lint/commitlint`                                                                                       | Conventional commit configuration                                                    |
+| `@pulse-kit/lint/lefthook`                                                                                         | Optional staged-file formatting/linting and commit-message checks                    |
 
 Choose `server`, rather than the individual `node` rule module, for a Node
 application. Base/server profiles do not require React dependencies. The native
@@ -139,7 +142,7 @@ To extend a preset, create a project-local `oxlint.json`:
 
 ```json
 {
-  "extends": ["./node_modules/@pulse/lint/dist/oxlint/strict.json"],
+  "extends": ["./node_modules/@pulse-kit/lint/dist/oxlint/strict.json"],
   "ignorePatterns": ["dist/**", "coverage/**"],
   "rules": {}
 }
@@ -150,8 +153,8 @@ For a custom framework-neutral strict profile, compose the base and overlay:
 ```json
 {
   "extends": [
-    "./node_modules/@pulse/lint/dist/oxlint/base.json",
-    "./node_modules/@pulse/lint/dist/oxlint/overlays/strict.json"
+    "./node_modules/@pulse-kit/lint/dist/oxlint/base.json",
+    "./node_modules/@pulse-kit/lint/dist/oxlint/overlays/strict.json"
   ],
   "rules": {}
 }
@@ -173,7 +176,7 @@ Consumer `lefthook.yml`:
 
 ```yaml
 extends:
-  - ./node_modules/@pulse/lint/dist/lefthook/index.yml
+  - ./node_modules/@pulse-kit/lint/dist/lefthook/index.yml
 ```
 
 Consumer `package.json`:
@@ -181,7 +184,7 @@ Consumer `package.json`:
 ```json
 {
   "commitlint": {
-    "extends": ["@pulse/lint/commitlint"]
+    "extends": ["@pulse-kit/lint/commitlint"]
   },
   "scripts": {
     "hooks:install": "pulse-lint lefthook install"
@@ -223,8 +226,8 @@ and the shared TypeScript config there. `prepack` rebuilds this complete output
 automatically. All public exports and CLI config paths point into `dist`. The
 archive ships `dist` plus package metadata, documentation and licenses; it excludes
 development sources and fixtures. Configs remain in their native JSON/YAML formats.
-Filesystem integrations use `node_modules/@pulse/lint/dist/...`; exported names
-such as `@pulse/lint/oxlint/server` stay unchanged.
+Filesystem integrations use `node_modules/@pulse-kit/lint/dist/...`; exported names
+such as `@pulse-kit/lint/oxlint/server` stay unchanged.
 
 CI runs Yarn immutable installs and the same suite on Node.js 24/Linux. Local verification does not establish
 that the CI run or a registry publication has happened. The repository's existing
@@ -242,3 +245,10 @@ Open Codex in this repository to discover
 and targeted checks, including build prerequisites and installed-archive testing.
 These maintenance instructions belong to the source repository and are excluded
 from the consumer archive. Update the guidance when its commands or contracts change.
+
+## Versioning and releases
+
+Run `yarn changeset` with consumer-visible changes. `yarn version:packages` applies
+version/changelog changes; CI normally runs it in a release PR. Build and dependency
+management remain on Yarn 4. The isolated upload job uses npm CLI for OIDC staging.
+See [releasing](docs/releasing.md) before configuring or approving a release.

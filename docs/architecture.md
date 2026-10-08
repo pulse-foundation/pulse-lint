@@ -1,7 +1,7 @@
 # Pulse Lint architecture
 
 Decision and research recorded on 2026-10-08. Scope: the `pulse-lint` repository,
-its distribution as `@pulse/lint`, and reusable context for maintainers/agents.
+its distribution as `@pulse-kit/lint`, and reusable context for maintainers/agents.
 The deployment manager belongs to Track and has a separate architecture.
 
 ## Package boundary
@@ -57,7 +57,7 @@ pulse-lint/
 
 Root JSON/YAML directories hold source assets. The build copies them into `dist`
 alongside compiled TypeScript. Consumers use exported names or documented paths
-under `node_modules/@pulse/lint/dist`; source directories are not published.
+under `node_modules/@pulse-kit/lint/dist`; source directories are not published.
 Config-relative references are authored for the built layout, so native linting
 uses the built preset rather than the source JSON.
 
@@ -83,10 +83,10 @@ out. [Yarn pack](https://yarnpkg.com/cli/pack) provides an archive and a dry-run
 
 Compatibility has two forms here:
 
-- Module/config consumers use exported names such as `@pulse/lint/tsconfig` and
-  `@pulse/lint/commitlint`.
+- Module/config consumers use exported names such as `@pulse-kit/lint/tsconfig` and
+  `@pulse-kit/lint/commitlint`.
 - JSON/YAML integrations use documented filesystem paths under
-  `node_modules/@pulse/lint`, including `dist/oxlint/*.json` and `dist/lefthook/index.yml`.
+  `node_modules/@pulse-kit/lint`, including `dist/oxlint/*.json` and `dist/lefthook/index.yml`.
   A Node export alias does not repair a changed filesystem path for these tools.
 
 Oxlint [resolves JS plugin specifiers relative to their config](https://oxc.rs/docs/guide/usage/linter/js-plugins.html).
@@ -170,8 +170,9 @@ upgrades as a separate concern from reorganizing files. Current online Oxlint do
 describe a newer evolving toolchain; TS config support and other new APIs are not
 evidence that the pinned binary supports them.
 
-Registry choice, publishing credentials, release automation and consumer rollouts
-remain separate work. A successful pack test proves the tested archive works; it
+Public npm releases now use Changesets and an isolated OIDC staging workflow; see
+[releasing](releasing.md) for the manual approval boundary and required remote setup.
+Consumer rollouts remain separate work. A successful pack test proves the tested archive works; it
 does not prove publication or all real consumer pipelines.
 
 ## Persistent agent context

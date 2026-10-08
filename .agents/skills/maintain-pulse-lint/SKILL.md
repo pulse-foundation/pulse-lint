@@ -1,6 +1,6 @@
 ---
 name: maintain-pulse-lint
-description: Use when changing pulse-lint presets, CLI, custom Oxlint rules, hooks, tool dependencies, build output or package exports, or diagnosing regressions in the installed @pulse/lint archive.
+description: Use when changing pulse-lint presets, CLI, custom Oxlint rules, hooks, tool dependencies, build output or package exports, or diagnosing regressions in the installed @pulse-kit/lint archive.
 ---
 
 # Maintain Pulse Lint
@@ -102,3 +102,17 @@ inside `dist`, and rejects runtime configs published at package root.
 Report the consumer-visible effect and fresh verification. Update the matching
 docs/skill when a contract changes. Packing/testing does not authorize publishing
 or changes in Chat, VPN or Track.
+
+## Release maintenance
+
+Read [releasing](../../../docs/releasing.md) before changing Changesets, workflows,
+registry configuration or package access. Use `yarn changeset` for version notes;
+keep one package. Public npm access is intentional. The workflow stages an exact
+pretested Yarn archive; final approval requires a human on npm with 2FA.
+Keep build/install/test work outside the OIDC job, Actions pinned by commit, install
+scripts disabled, and audit failures blocking. `PULSE_LINT_ARCHIVE` makes the
+package test consume an existing archive instead of repacking. Run `yarn test`,
+`yarn audit:dependencies`, workflow validation and an npm staging dry run when
+changing this path. Report audit blockers separately from functional tests.
+Do not claim branch rules, npm trust or provenance are enabled based on YAML alone.
+Do not stage, approve, publish or change remote security settings without user scope.

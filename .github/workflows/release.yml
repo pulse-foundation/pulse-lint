@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+env:
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+
+jobs:
+  plan:
+    if: github.repository == 'pulse-foundation/pulse-lint' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24.18.0
+          package-manager-cache: false
+      - run: corepack enable && corepack install
+      - run: yarn install --immutable --check-cache
+      - run: yarn changeset status --output release-status.json
+      - id: plan
+        run: node scripts/release-plan.ts --github
+        env:
+          RELEASE_BASE_SHA: ${{ github.event.before }}
+
+  version:
+    needs: plan
+    if: needs.plan.outputs.mode == 'version'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24.18.0
+          package-manager-cache: false
+      - run: corepack enable && corepack install
+      - run: yarn install --immutable --check-cache
+      - uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          script: yarn version:packages
+          commit-message: 'chore(release): version package'
+          pr-title: 'chore(release): version package'
+          github-token: ${{ github.token }}
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.mode == 'stage'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24.18.0
+          package-manager-cache: false
+      - run: corepack enable && corepack install
+      - run: yarn install --immutable --check-cache
+      - run: yarn audit:dependencies
+      - run: yarn test
+      - run: mkdir -p release && yarn pack --out release/pulse-lint.tgz
+      - name: Test the exact archive that will be staged
+        run: yarn test:package
+        env:
+          PULSE_LINT_ARCHIVE: release/pulse-lint.tgz
+      - name: Record archive identity
+        working-directory: release
+        run: |
+          sha512sum pulse-lint.tgz > SHA512SUMS
+          printf '%s\n' "$GITHUB_SHA" > COMMIT
+          cat SHA512SUMS >> "$GITHUB_STEP_SUMMARY"
+      - id: upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: npm-package
+          path: release/
+          if-no-files-found: error
+          retention-days: 14
+
+  stage:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: npm-release
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    # This runner never checks out the repository, installs dependencies or runs its scripts.
+    steps:
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24.18.0
+          package-manager-cache: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ needs.build.outputs.artifact-id }}
+          path: release
+          merge-multiple: true
+      - name: Verify and stage the tested archive
+        working-directory: release
+        run: |
+          test "$(cat COMMIT)" = "$GITHUB_SHA"
+          sha512sum --check SHA512SUMS
+          npm stage publish ./pulse-lint.tgz --access public --tag latest --ignore-scripts --registry=https://registry.npmjs.org

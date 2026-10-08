@@ -24,8 +24,10 @@ test('packed package installs and runs outside its source repository', () => {
     return result.stdout;
   };
   try {
-    const archive = path.join(temporary, 'pulse-lint.tgz');
-    run(yarnPath, ['pack', '--out', archive], packageRoot);
+    const archive = process.env.PULSE_LINT_ARCHIVE
+      ? path.resolve(process.env.PULSE_LINT_ARCHIVE)
+      : path.join(temporary, 'pulse-lint.tgz');
+    if (!process.env.PULSE_LINT_ARCHIVE) run(yarnPath, ['pack', '--out', archive], packageRoot);
     const entries = run('tar', ['-tzf', archive]).split('\n');
     assert.equal(
       entries.some((file) =>
@@ -57,7 +59,7 @@ test('packed package installs and runs outside its source repository', () => {
         type: 'module',
         packageManager: manifest.packageManager,
         dependencies: {
-          '@pulse/lint': `file:${archive}`,
+          '@pulse-kit/lint': `file:${archive}`,
           ...Object.fromEntries(
             ['react', '@types/react'].map((name) => [name, manifest.devDependencies[name]]),
           ),
@@ -68,7 +70,7 @@ test('packed package installs and runs outside its source repository', () => {
     // Reuse pinned external resolutions, not source directories, so the install needs no network.
     fs.copyFileSync(path.join(packageRoot, 'yarn.lock'), path.join(temporary, 'yarn.lock'));
     run(yarnPath, ['install']);
-    const installed = path.join(temporary, 'node_modules/@pulse/lint');
+    const installed = path.join(temporary, 'node_modules/@pulse-kit/lint');
     const cli = path.join(installed, 'dist/cli/index.js');
     const published = JSON.parse(fs.readFileSync(path.join(installed, 'package.json'), 'utf8')) as {
       exports: Record<string, string>;
@@ -154,7 +156,7 @@ test('packed package installs and runs outside its source repository', () => {
     fs.writeFileSync(
       path.join(temporary, 'tsconfig.json'),
       JSON.stringify({
-        extends: '@pulse/lint/tsconfig',
+        extends: '@pulse-kit/lint/tsconfig',
         include: ['valid.ts'],
       }),
     );
@@ -173,10 +175,10 @@ test('packed package installs and runs outside its source repository', () => {
         ],
         { cwd: temporary, env, encoding: 'utf8' },
       ).trim();
-    assert.match(resolveExport('@pulse/lint/oxlint/native'), /native\.json$/);
-    assert.match(resolveExport('@pulse/lint/oxlint/strict'), /strict\.json$/);
+    assert.match(resolveExport('@pulse-kit/lint/oxlint/native'), /native\.json$/);
+    assert.match(resolveExport('@pulse-kit/lint/oxlint/strict'), /strict\.json$/);
     for (const name of ['base', 'web', 'server', 'server-strict', 'overlays/strict']) {
-      assert.ok(resolveExport(`@pulse/lint/oxlint/${name}`).endsWith(`/${name}.json`));
+      assert.ok(resolveExport(`@pulse-kit/lint/oxlint/${name}`).endsWith(`/${name}.json`));
     }
     fs.writeFileSync(
       path.join(temporary, 'image.tsx'),

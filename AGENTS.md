@@ -1,6 +1,6 @@
 # Pulse Lint
 
-`@pulse/lint` is one shared tooling package for Pulse projects. Its public contracts
+`@pulse-kit/lint` is one shared tooling package for Pulse projects. Its public contracts
 are the CLI commands, exported presets and documented config paths.
 
 ## Start here

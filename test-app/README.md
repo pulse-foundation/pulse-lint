@@ -1,6 +1,6 @@
 # pulse-lint test app
 
-Minimal application fixture used to validate `@pulse/lint` against app-shaped code.
+Minimal application fixture used to validate `@pulse-kit/lint` against app-shaped code.
 
 ## Run checks
 

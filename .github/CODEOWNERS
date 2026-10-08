@@ -1,0 +1,9 @@
+# Enable required CODEOWNER review in the main branch ruleset.
+/.github/ @reabiliti
+/.changeset/ @reabiliti
+/scripts/ @reabiliti
+/package.json @reabiliti
+/yarn.lock @reabiliti
+/.yarnrc.yml @reabiliti
+/test/package.test.ts @reabiliti
+/docs/releasing.md @reabiliti
