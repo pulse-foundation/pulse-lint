@@ -6,21 +6,21 @@ Inspected on 2026-10-08. Sources: Chat `packages/pulse-lint`, VPN `oxlint.json`,
 VPN's baseline was adapted from Chat. It uses fewer explicit rules and stricter
 execution gates. Neither profile is uniformly stronger.
 
-| Area                        | Chat baseline                                      | VPN                                                                      | Extraction decision                                     |
-| --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------- |
-| Oxlint / Oxfmt              | 1.35.0 / ^0.35.0                                   | 1.83.0 / 0.68.0                                                          | Updated after extraction; see toolchain upgrade notes   |
-| File size                   | Warning at 350 lines                               | Error over 220 nonblank, noncomment lines                                | Add optional strict preset                              |
-| Function size               | No explicit limit                                  | Error over 80 nonblank, noncomment lines                                 | Add to strict; exempt tests                             |
-| Warnings                    | Web hooks permit 20                                | Zero allowed                                                             | Strict CLI rejects warnings; default remains compatible |
-| Unused disable directives   | Not a default error                                | Errors                                                                   | Enable in strict CLI                                    |
-| Import ordering / filenames | JavaScript plugins                                 | No equivalent general rule                                               | Preserve Chat checks                                    |
-| Duplicate imports           | `import/no-duplicates`, query strings considered   | `no-duplicate-imports`                                                   | Preserve Chat's existing rule; avoid double reporting   |
-| React dynamic links         | Explicit `enforceDynamicLinks: always`             | Default options                                                          | Preserve Chat options                                   |
-| Duplicate JSX props         | Explicit `ignoreCase: true`                        | Default options                                                          | Use supported native options                            |
-| Native applications         | Typed rules, React Compiler and feature boundaries | No native profile                                                        | Preserve and export native preset                       |
-| Component layout            | Allows several components per file                 | Single component, `component-folder/index.tsx`, hooks/mutations separate | Keep VPN architecture local                             |
-| Format preferences          | Single quotes for TS/JS and JSX                    | Same                                                                     | Preserve shared formatter config; ignores stay local    |
-| Full quality checks         | Depend on each app                                 | Format, lint, typecheck, Knip; tests/build separately                    | Document consumer-owned gates                           |
+| Area                        | Chat baseline                                      | VPN                                                                      | Extraction decision                                        |
+| --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Oxlint / Oxfmt              | 1.35.0 / ^0.35.0                                   | 1.83.0 / 0.68.0                                                          | Updated after extraction; see toolchain upgrade notes      |
+| File size                   | Warning at 350 lines                               | Error over 220 nonblank, noncomment lines                                | Add optional strict preset                                 |
+| Function size               | No explicit limit                                  | Error over 80 nonblank, noncomment lines                                 | Add to strict; exempt tests                                |
+| Warnings                    | Web hooks permit 20                                | Zero allowed                                                             | Strict CLI rejects warnings; default remains compatible    |
+| Unused disable directives   | Not a default error                                | Errors                                                                   | Enable in strict CLI                                       |
+| Import ordering / filenames | JavaScript plugins                                 | No equivalent general rule                                               | Oxfmt sorting; naming plugin with corrected directory glob |
+| Duplicate imports           | `import/no-duplicates`, query strings considered   | `no-duplicate-imports`                                                   | Preserve Chat's existing rule; avoid double reporting      |
+| React dynamic links         | Explicit `enforceDynamicLinks: always`             | Default options                                                          | Preserve Chat options                                      |
+| Duplicate JSX props         | Explicit `ignoreCase: true`                        | Default options                                                          | Use supported native options                               |
+| Native applications         | Typed rules, React Compiler and feature boundaries | No native profile                                                        | Preserve and export native preset                          |
+| Component layout            | Allows several components per file                 | Single component, `component-folder/index.tsx`, hooks/mutations separate | Keep VPN architecture local                                |
+| Format preferences          | Single quotes for TS/JS and JSX                    | Same                                                                     | Preserve shared formatter config; ignores stay local       |
+| Full quality checks         | Depend on each app                                 | Format, lint, typecheck, Knip; tests/build separately                    | Document consumer-owned gates                              |
 
 Chat's merged JSON contains 307 explicit rule entries, including disabled rules;
 VPN's root config has 50. Of those 50, 39 have literally identical JSON values,

@@ -107,7 +107,8 @@ they are not automatically merged by the CLI. Hook integrations currently use
 
 ## Policy ownership and releases
 
-The default web profile retains the tested Chat lint gates. The toolchain update
+The default web profile derives from the tested Chat lint gates; the 2026-10-09
+upgrade moves import sorting to Oxfmt and activates directory naming checks. The toolchain update
 removes legacy entries that Oxlint never implemented; see [upgrade notes](toolchain-upgrade.md). `strict` adds
 opt-in limits and execution gates adopted from VPN. `native` adds React Native
 type-aware checks, compiler diagnostics and existing Pulse-specific boundaries.
@@ -123,10 +124,10 @@ It is an opinionated native profile, not a universal React Native baseline.
 | Compatible compositions | Preserve existing entry points and provide convenient combinations | `index.json`, `strict.json`, `server-strict.json`                                |
 
 `base` combines neutral core, imports, TypeScript and variable rules plus import
-sorting/naming plugins. `web` adds legacy React, accessibility and Node plugin
+naming checks. Import sorting belongs to the formatter. `web` adds legacy React, accessibility and Node plugin
 rules. `server` adds Node rules/environment and rejects `window`/`document`;
 it does not enable React or a11y plugins. `native` retains its existing Pulse
-rules and compiler/type-aware integration while using the shared base.
+rules and built-in compiler/type-aware integration while using the shared base.
 
 The legacy `best-practices.json` export now aliases the shared core. Its former
 `no-restricted-syntax` entry was not implemented by Oxlint and has been removed

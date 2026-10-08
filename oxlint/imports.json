@@ -64,27 +64,10 @@
     ],
     "no-duplicate-imports": "off",
     "sort-imports": "off",
-    "simple-import-sort/imports": [
-      "warn",
-      {
-        "groups": [
-          [
-            "^(assert|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|https|module|net|os|path|punycode|querystring|readline|repl|stream|string_decoder|sys|timers|tls|tty|url|util|vm|zlib|freelist|v8|process|async_hooks|http2|perf_hooks)(/.*|$)"
-          ],
-          ["^react", "^redux", "^@?\\w"],
-          ["^@pulse(/.*|$)"],
-          ["^@/"],
-          ["^#"],
-          ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-          ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
-          ["^\\..*\\.s?css$"]
-        ]
-      }
-    ],
     "check-file/folder-naming-convention": [
       "error",
       {
-        "**/*.*": "KEBAB_CASE"
+        "**/": "KEBAB_CASE"
       }
     ],
     "check-file/filename-naming-convention": [
@@ -94,15 +77,6 @@
       },
       {
         "ignoreMiddleExtensions": true
-      }
-    ],
-    "check-file/filename-blocklist": [
-      "error",
-      {
-        "**/tsconfig.eslint.json": "*tsconfig.json"
-      },
-      {
-        "errorMessage": "\u0412\u043c\u0435\u0441\u0442\u043e tsconfig.eslint.json \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 languageOptions.parserOptions.projectService.allowDefaultProject \u0432 \u043a\u043e\u043d\u0444\u0438\u0433\u0435 eslint"
       }
     ]
   }

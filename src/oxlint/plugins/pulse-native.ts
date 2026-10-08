@@ -1,7 +1,8 @@
+import path from 'node:path';
+
 import type { Rule } from 'eslint';
 import type * as ESTree from 'estree';
 import type { JSXAttribute, JSXExpressionContainer, JSXText } from 'estree-jsx';
-import path from 'node:path';
 
 type NativeListeners = {
   JSXText?: (node: JSXText) => void;

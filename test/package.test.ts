@@ -126,6 +126,31 @@ test('packed package installs and runs outside its source repository', () => {
     assert.notEqual(invalid.status, 0, invalid.stdout + invalid.stderr);
     assert.match(invalid.stdout + invalid.stderr, /eqeqeq/);
     run(process.execPath, [cli, 'oxfmt:check', 'valid.ts']);
+    fs.mkdirSync(path.join(temporary, 'badFolder'));
+    fs.writeFileSync(path.join(temporary, 'badFolder/file.ts'), 'export const value = 1;\n');
+    const folder = spawnSync(process.execPath, [cli, 'oxlint:base', 'badFolder/file.ts'], {
+      cwd: temporary,
+      env,
+      encoding: 'utf8',
+    });
+    assert.equal(folder.status, 1, folder.stdout + folder.stderr);
+    assert.match(folder.stdout + folder.stderr, /folder-naming-convention/);
+    fs.writeFileSync(
+      path.join(temporary, 'imports.ts'),
+      "import local from './valid';\nimport alias from '@/alias';\n\nexport const values = [local, alias];\n",
+    );
+    const order = spawnSync(process.execPath, [cli, 'oxfmt:check', 'imports.ts'], {
+      cwd: temporary,
+      env,
+      encoding: 'utf8',
+    });
+    assert.equal(order.status, 1, order.stdout + order.stderr);
+    run(process.execPath, [cli, 'oxfmt', 'imports.ts']);
+    run(process.execPath, [cli, 'oxfmt:check', 'imports.ts']);
+    assert.ok(
+      fs.readFileSync(path.join(temporary, 'imports.ts'), 'utf8').startsWith('import alias'),
+    );
+
     fs.writeFileSync(
       path.join(temporary, 'tsconfig.json'),
       JSON.stringify({
@@ -174,7 +199,7 @@ test('packed package installs and runs outside its source repository', () => {
     });
     assert.notEqual(browser.status, 0);
     assert.match(browser.stdout + browser.stderr, /no-restricted-globals/);
-    const server = path.join(temporary, 'server app');
+    const server = path.join(temporary, 'server-app');
     fs.mkdirSync(server);
     fs.writeFileSync(
       path.join(server, 'package.json'),
@@ -184,7 +209,7 @@ test('packed package installs and runs outside its source repository', () => {
       }),
     );
     fs.copyFileSync(path.join(temporary, 'image.tsx'), path.join(server, 'image.tsx'));
-    run(process.execPath, [cli, 'lint', '--deny-warnings', 'server app/image.tsx']);
+    run(process.execPath, [cli, 'lint', '--deny-warnings', 'server-app/image.tsx']);
     fs.writeFileSync(
       path.join(temporary, 'long.ts'),
       `${Array.from({ length: 221 }, (_, index) => `export const value${index} = ${index};`).join(
@@ -219,6 +244,14 @@ test('packed package installs and runs outside its source repository', () => {
     assert.notEqual(nativeInvalid.status, 0);
     assert.match(nativeInvalid.stdout + nativeInvalid.stderr, /no-raw-jsx-text/);
     run(process.execPath, [cli, 'lint', 'src/shared/generated/tokens.tsx'], native);
+    const compiler = spawnSync(
+      process.execPath,
+      [cli, 'oxlint:native', 'src/features/violations/ref-in-render.tsx'],
+      { cwd: native, env, encoding: 'utf8' },
+    );
+    assert.equal(compiler.status, 1, compiler.stdout + compiler.stderr);
+    assert.match(compiler.stdout + compiler.stderr, /react\(refs\)/);
+
     for (const [file, source, rule] of [
       [
         'src/features/inbox/relative-deep.ts',

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-import { execa, ExecaError } from 'execa';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { execa, ExecaError } from 'execa';
 
 import { splitLintArgs } from './args.js';
 import { partitionLintTargets } from './partition.js';

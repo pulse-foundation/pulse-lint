@@ -88,8 +88,12 @@ inside `dist`, and rejects runtime configs published at package root.
 - Read `docs/toolchain-upgrade.md` before restoring legacy rules: 48 old entries
   were never implemented by Oxlint. Their exact values are retained in the linked
   JSON inventory. Do not silently reintroduce them to shipped presets.
-- Native React Compiler gates currently use the JS plugin; overlapping built-in
-  rules are disabled there to prevent duplicate reports. Keep the JS error gates.
+- Native React Compiler gates use 13 built-in `react/*` rules at error severity.
+  Run `test/compiler-rules.test.ts` for the migration corpus; do not re-add the JS
+  compiler plugin or `config`/`gating` without a concrete need.
+- Import order is enforced by Oxfmt, not Oxlint. Preserve `sortSideEffects: false`,
+  test grouping/idempotence and real-hook staging when modifying sorting. Base/web/
+  server directory naming uses a directory glob; native keeps Expo-aware naming.
 - Tests accept graphical and agent diagnostic output; use `--format=json` for
   exact file counts. Avoid relying on automatic terminal summary formatting.
 - Root self-lint overrides are distinct from shipped rules. Public preset changes

@@ -7,5 +7,5 @@
     "./react-a11y.json",
     "./react.json"
   ],
-  "jsPlugins": ["eslint-plugin-simple-import-sort", "eslint-plugin-check-file", "eslint-plugin-n"]
+  "jsPlugins": ["eslint-plugin-check-file", "eslint-plugin-n"]
 }

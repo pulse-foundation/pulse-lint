@@ -1,0 +1,3 @@
+# Deliberately invalid or unsorted lint fixtures; tests format temporary copies.
+test/*-fixture/
+test/import-order/

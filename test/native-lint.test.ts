@@ -33,7 +33,7 @@ const VALID_FILES = [
 ];
 
 // One violation per file, so every failure is attributable: [file, rule id, message pattern].
-// The import-order case is a warning: native runs --deny-warnings, also behind `lint --max-warnings`.
+// The debugger case is a warning: native runs --deny-warnings, also behind `lint --max-warnings`.
 const V = 'src/features/violations';
 const INVALID_FILES: Array<[string, string, RegExp]> = [
   [`${V}/conditional-hook.tsx`, 'react-hooks(rules-of-hooks)', /conditionally/],
@@ -51,8 +51,8 @@ const INVALID_FILES: Array<[string, string, RegExp]> = [
   [`${V}/raw-text.tsx`, 'pulse-native(no-raw-jsx-text)', /"Hello there"/],
   [`${V}/memo-comparator.tsx`, 'pulse-native(no-memo-comparator)', /memo comparators/],
   ['src/shared/format/formatName.ts', 'pulse-native(filename-convention)', /'formatName'/],
-  [`${V}/ref-in-render.tsx`, 'react-hooks-js(refs)', /Cannot access refs during render/],
-  [`${V}/unsorted-imports.ts`, 'simple-import-sort(imports)', /sort these imports/],
+  [`${V}/ref-in-render.tsx`, 'react(refs)', /Cannot access refs during render/],
+  [`${V}/debugger.ts`, 'eslint(no-debugger)', /debugger/],
 ];
 
 // Expo Router segments plus a space: must reach oxlint as one argv entry, never through a shell.
@@ -342,11 +342,24 @@ describe('pre-commit hook in an isolated git repository', () => {
   });
 
   test('keeps --deny-warnings for native files although the hook passes --max-warnings', async () => {
-    await assertRejectedLikeOxlintNative('src/features/violations/unsorted-imports.ts');
+    await assertRejectedLikeOxlintNative('src/features/violations/debugger.ts');
   });
 
   test('rejects a staged path with parentheses, brackets and a space', async () => {
     await assertRejectedLikeOxlintNative(SPECIAL_PATH_FILE);
+  });
+
+  test('sorts staged native imports before linting and commits the formatted result', async () => {
+    const file = 'native-fixture/src/features/violations/unsorted-imports.ts';
+    git('add', file);
+    const hook = await commit('feat: sort native imports');
+    assert.equal(hook.status, 0, hook.output);
+    const committed = git('show', `HEAD:${file}`);
+    assert.ok(
+      committed.indexOf("from 'react'") < committed.indexOf("from '@/shared/i18n'"),
+      committed,
+    );
+    assertUnrelatedEditUntouched();
   });
 
   test('commits when the only staged native file is ignored', async () => {

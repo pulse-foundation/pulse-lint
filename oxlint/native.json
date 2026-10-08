@@ -1,16 +1,7 @@
 {
   "plugins": ["typescript", "unicorn", "oxc", "react", "import"],
   "extends": ["./base.json", "./best-practices.json", "./node.json", "./react.json"],
-  "jsPlugins": [
-    "eslint-plugin-simple-import-sort",
-    "eslint-plugin-check-file",
-    "eslint-plugin-n",
-    {
-      "name": "react-hooks-js",
-      "specifier": "eslint-plugin-react-hooks"
-    },
-    "./plugins/pulse-native.js"
-  ],
+  "jsPlugins": ["eslint-plugin-check-file", "eslint-plugin-n", "./plugins/pulse-native.js"],
   "ignorePatterns": [
     "ios/**",
     "android/**",
@@ -38,21 +29,6 @@
     "pulse-native/no-cross-feature-deep-import": "error",
     "pulse-native/no-memo-comparator": "error",
     "pulse-native/no-raw-jsx-text": "error",
-    "react-hooks-js/static-components": "error",
-    "react-hooks-js/use-memo": "error",
-    "react-hooks-js/void-use-memo": "error",
-    "react-hooks-js/preserve-manual-memoization": "error",
-    "react-hooks-js/incompatible-library": "error",
-    "react-hooks-js/immutability": "error",
-    "react-hooks-js/globals": "error",
-    "react-hooks-js/refs": "error",
-    "react-hooks-js/set-state-in-effect": "error",
-    "react-hooks-js/error-boundaries": "error",
-    "react-hooks-js/purity": "error",
-    "react-hooks-js/set-state-in-render": "error",
-    "react-hooks-js/unsupported-syntax": "error",
-    "react-hooks-js/config": "error",
-    "react-hooks-js/gating": "error",
     "typescript/no-floating-promises": "error",
     "typescript/no-misused-promises": "error",
     "typescript/await-thenable": "error",
@@ -129,19 +105,19 @@
         ]
       }
     ],
-    "react/static-components": "off",
-    "react/use-memo": "off",
-    "react/void-use-memo": "off",
-    "react/preserve-manual-memoization": "off",
-    "react/incompatible-library": "off",
-    "react/immutability": "off",
-    "react/globals": "off",
-    "react/refs": "off",
-    "react/set-state-in-effect": "off",
-    "react/error-boundaries": "off",
-    "react/purity": "off",
-    "react/set-state-in-render": "off",
-    "react/unsupported-syntax": "off"
+    "react/static-components": "error",
+    "react/use-memo": "error",
+    "react/void-use-memo": "error",
+    "react/preserve-manual-memoization": "error",
+    "react/incompatible-library": "error",
+    "react/immutability": "error",
+    "react/globals": "error",
+    "react/refs": "error",
+    "react/set-state-in-effect": "error",
+    "react/error-boundaries": "error",
+    "react/purity": "error",
+    "react/set-state-in-render": "error",
+    "react/unsupported-syntax": "error"
   },
   "overrides": [
     {

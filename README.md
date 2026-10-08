@@ -32,7 +32,7 @@ strict policy overlay. Preset names below resolve through package exports; JSON
 
 | Export                                                                                                         | Purpose                                                                              |
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `@pulse/lint/oxlint`                                                                                           | Compatible default; same web rules as before                                         |
+| `@pulse/lint/oxlint`                                                                                           | Default web profile; see migration notes below                                       |
 | `@pulse/lint/oxlint/base`                                                                                      | Shared JS/TS, imports and naming rules without React, a11y or Node plugin rules      |
 | `@pulse/lint/oxlint/web`                                                                                       | Explicit web/React profile, equivalent to the default                                |
 | `@pulse/lint/oxlint/server`                                                                                    | Base plus Node rules and environment; rejects `window` and `document`                |
@@ -41,7 +41,7 @@ strict policy overlay. Preset names below resolve through package exports; JSON
 | `@pulse/lint/oxlint/overlays/strict`                                                                           | Framework-neutral 220-line file / 80-line function limits and test exemptions        |
 | `@pulse/lint/oxlint/native`                                                                                    | React Native, type-aware checks, React Compiler and Pulse boundaries                 |
 | `@pulse/lint/oxlint/typescript`, `/react`, `/react-a11y`, `/node`, `/imports`, `/variables`, `/best-practices` | Rule modules for composition; these are not complete project profiles                |
-| `@pulse/lint/oxfmt`                                                                                            | Shared single-quote formatting                                                       |
+| `@pulse/lint/oxfmt`                                                                                            | Single quotes and grouped import sorting                                             |
 | `@pulse/lint/tsconfig`                                                                                         | Standalone strict TypeScript base; consumers provide includes, JSX and runtime types |
 | `@pulse/lint/commitlint`                                                                                       | Conventional commit configuration                                                    |
 | `@pulse/lint/lefthook`                                                                                         | Optional staged-file formatting/linting and commit-message checks                    |
@@ -57,9 +57,29 @@ Commitlint also reports upstream peers for its optional TS config loader; our
 exported config is compiled JavaScript and is tested in that consumer without
 the development TypeScript dependency.
 Dependencies are pinned to the stable versions checked on 2026-10-08.
-Lefthook uses 2.1.17 while 2.2.x is inside Yarn's 24-hour age gate.
+Lefthook was held at 2.1.17 by Yarn's 24-hour age gate on that date; recheck before upgrading.
 See [upgrade notes](docs/toolchain-upgrade.md) for compatibility changes and
 [the comparison with VPN](docs/preset-comparison.md) for the original baselines.
+
+## Preset changes — 2026-10-09
+
+Import sorting now belongs to Oxfmt. Run `pulse-lint oxfmt:check` in CI alongside
+lint; lint alone no longer checks import order. The shipped pre-commit hook formats
+and sorts staged files before linting and stages the fixes. Groups are Node builtins,
+external packages, `@pulse`, `@/`, `#`, parent imports, siblings/indexes and styles.
+Side-effect import order is preserved. Oxfmt's algorithm differs from the former
+`simple-import-sort` rule, so a first formatting pass may change existing imports.
+
+Folder naming now checks ordinary directories, including nested directories;
+previously its glob missed names such as `badFolder`. Base/web/server require
+kebab-case; native retains its custom Expo-aware naming rule. The inactive
+`tsconfig.eslint.json` blocklist has been removed because Oxlint does not lint JSON.
+
+Native React Compiler errors use Oxlint's built-in rules. `config` and `gating`
+are omitted because Oxlint uses fixed compiler options and does not expose gating.
+The `react-hooks` and `simple-import-sort` npm plugins are no longer dependencies.
+`eslint-plugin-n` stays: its `no-path-concat` catches `import.meta` cases missing
+from the built-in equivalent. See [upgrade notes](docs/toolchain-upgrade.md).
 
 ## Commands
 
@@ -84,7 +104,7 @@ pulse-lint oxlint:server src
 pulse-lint oxlint:server:strict src
 ```
 
-`oxlint` remains the compatible web command. Server/base runs are not type-aware;
+`oxlint` remains the default web command. Server/base runs are not type-aware;
 run the project's typechecker separately.
 
 `pulse-lint oxlint:strict` uses the strict preset, rejects warnings and reports

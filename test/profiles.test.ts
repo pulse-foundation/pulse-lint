@@ -119,7 +119,7 @@ test('strict overlay composes with base without enabling React', () => {
 
 test('file dispatcher separates server projects and respects the nearest package boundary', () => {
   inProject((cwd) => {
-    const server = path.join(cwd, 'server app');
+    const server = path.join(cwd, 'server-app');
     const nested = path.join(server, 'web');
     fs.mkdirSync(nested, { recursive: true });
     fs.writeFileSync(
@@ -130,23 +130,40 @@ test('file dispatcher separates server projects and respects the nearest package
     const image = "export const image = <img src='/logo.svg' />;\n";
     fs.writeFileSync(path.join(server, 'image.tsx'), image);
     fs.writeFileSync(path.join(nested, 'image.tsx'), image);
-    const valid = lint(cwd, 'lint', 'server app/image.tsx');
+    const valid = lint(cwd, 'lint', 'server-app/image.tsx');
     assert.equal(valid.status, 0, valid.output);
-    const mixed = lint(cwd, 'lint', 'server app/image.tsx', 'server app/web/image.tsx');
+    const mixed = lint(cwd, 'lint', 'server-app/image.tsx', 'server-app/web/image.tsx');
     assert.notEqual(mixed.status, 0, mixed.output);
     assert.match(mixed.output, /alt-text/);
     assert.match(mixed.output, /web\/image.tsx/);
-    assert.doesNotMatch(mixed.output, /server app\/image.tsx/);
+    assert.doesNotMatch(mixed.output, /server-app\/image.tsx/);
     fs.writeFileSync(path.join(server, 'browser.ts'), 'export const title = document.title;\n');
-    const invalid = lint(cwd, 'lint', 'server app/browser.ts');
+    const invalid = lint(cwd, 'lint', 'server-app/browser.ts');
     assert.notEqual(invalid.status, 0, invalid.output);
     assert.match(invalid.output, /no-restricted-globals/);
     fs.writeFileSync(path.join(server, 'warning.ts'), 'console.log(42);\n');
-    const warning = lint(cwd, 'lint', '--deny-warnings', 'server app/warning.ts');
+    const warning = lint(cwd, 'lint', '--deny-warnings', 'server-app/warning.ts');
     assert.notEqual(warning.status, 0, warning.output);
     assert.match(warning.output, /no-console/);
-    const directory = lint(cwd, 'lint', 'server app');
+    const directory = lint(cwd, 'lint', 'server-app');
     assert.notEqual(directory.status, 0, directory.output);
     assert.match(directory.output, /alt-text/);
+  });
+});
+
+test('base rejects non-kebab directories while allowing nested kebab directories', () => {
+  inProject((cwd) => {
+    for (const directory of ['badFolder', 'good-folder/badFolder', 'good-folder/deep-folder']) {
+      fs.mkdirSync(path.join(cwd, directory), { recursive: true });
+      const file = `${directory}/file.ts`;
+      fs.writeFileSync(path.join(cwd, file), 'export const value = 42;\n');
+      const result = lint(cwd, 'oxlint:base', file);
+      if (directory.includes('badFolder')) {
+        assert.equal(result.status, 1, result.output);
+        assert.match(result.output, /folder-naming-convention/);
+      } else {
+        assert.equal(result.status, 0, result.output);
+      }
+    }
   });
 });
