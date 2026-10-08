@@ -1,0 +1,34 @@
+{
+  "rules": {
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/explicit-function-return-type": "off",
+    "typescript/array-type": [
+      "error",
+      {
+        "default": "array-simple",
+        "readonly": "array-simple"
+      }
+    ],
+    "typescript/consistent-type-assertions": "error",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ],
+    "typescript/consistent-type-exports": [
+      "error",
+      {
+        "fixMixedExportsWithInlineTypeSpecifier": true
+      }
+    ],
+    "typescript/no-require-imports": "off",
+    "typescript/no-unsafe-argument": "off",
+    "typescript/require-await": "off",
+    "typescript/no-dupe-class-members": "off",
+    "typescript/no-redeclare": "off",
+    "typescript/no-unsafe-return": "off",
+    "typescript/no-unsafe-member-access": "off",
+    "typescript/only-throw-error": "error"
+  }
+}

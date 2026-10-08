@@ -1,0 +1,3 @@
+{
+  "extends": ["./web.json", "./overlays/strict.json"]
+}

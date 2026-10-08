@@ -1,0 +1,14 @@
+.user-card {
+  border: 1px solid #d4d4d8;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.user-card__header {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.user-card__meta {
+  margin: 0;
+}

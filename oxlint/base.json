@@ -1,0 +1,5 @@
+{
+  "plugins": ["typescript", "unicorn", "oxc", "import"],
+  "extends": ["./rules/core.json", "./imports.json", "./typescript.json", "./variables.json"],
+  "jsPlugins": ["eslint-plugin-simple-import-sort", "eslint-plugin-check-file"]
+}

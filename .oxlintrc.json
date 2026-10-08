@@ -1,0 +1,23 @@
+{
+  "extends": ["./oxlint/index.json"],
+  "overrides": [
+    {
+      "files": ["src/cli/**", "test/*.test.ts"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["src/cli/partition.ts", "src/oxlint/plugins/pulse-native.ts"],
+      "rules": {
+        "no-continue": "off"
+      }
+    },
+    {
+      "files": ["test/*.test.ts"],
+      "rules": {
+        "max-lines": "off"
+      }
+    }
+  ]
+}

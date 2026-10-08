@@ -1,0 +1,7 @@
+{
+  "name": "pulse-lint-native-fixture",
+  "private": true,
+  "pulseLint": {
+    "preset": "native"
+  }
+}

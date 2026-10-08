@@ -1,0 +1,7 @@
+{
+  "extends": ["./server.json", "./overlays/strict.json"],
+  "env": {
+    "node": true,
+    "browser": false
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "import"],
+  "extends": [
+    "./base.json",
+    "./best-practices.json",
+    "./node.json",
+    "./react-a11y.json",
+    "./react.json"
+  ],
+  "jsPlugins": ["eslint-plugin-simple-import-sort", "eslint-plugin-check-file", "eslint-plugin-n"]
+}

@@ -1,0 +1,109 @@
+{
+  "rules": {
+    "import/named": "error",
+    "import/default": "off",
+    "import/namespace": "off",
+    "import/export": "error",
+    "import/no-named-as-default": "error",
+    "import/no-named-as-default-member": "warn",
+    "import/no-mutable-exports": "error",
+    "import/no-commonjs": "off",
+    "import/no-amd": "error",
+    "import/first": "error",
+    "import/no-duplicates": [
+      "error",
+      {
+        "considerQueryString": true
+      }
+    ],
+    "import/extensions": "off",
+    "import/newline-after-import": "error",
+    "import/prefer-default-export": "off",
+    "import/max-dependencies": "off",
+    "import/no-absolute-path": "error",
+    "import/no-dynamic-require": "error",
+    "import/unambiguous": "off",
+    "import/no-webpack-loader-syntax": "error",
+    "import/no-unassigned-import": "off",
+    "import/no-named-default": "error",
+    "import/no-anonymous-default-export": "off",
+    "import/group-exports": "off",
+    "import/no-default-export": "off",
+    "import/no-named-export": "off",
+    "import/no-self-import": "error",
+    "import/no-cycle": [
+      "error",
+      {
+        "ignoreExternal": true
+      }
+    ],
+    "import/no-relative-parent-imports": "off",
+    "import/consistent-type-specifier-style": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "lodash",
+            "message": "Import specific parts of \"lodash\" explicitly, for example: `import isEqual from \"lodash/isEqual\"`. This will help ensure greater consistency in builds and make it easier to align versions across projects"
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["lodash.*"],
+            "message": "Import specific parts of \"lodash\" explicitly, for example: `import isEqual from \"lodash/isEqual\"`. This will help ensure greater consistency in builds and make it easier to align versions across projects"
+          }
+        ]
+      }
+    ],
+    "no-restricted-exports": [
+      "error",
+      {
+        "restrictedNamedExports": ["default", "then"]
+      }
+    ],
+    "no-duplicate-imports": "off",
+    "sort-imports": "off",
+    "simple-import-sort/imports": [
+      "warn",
+      {
+        "groups": [
+          [
+            "^(assert|buffer|child_process|cluster|console|constants|crypto|dgram|dns|domain|events|fs|http|https|module|net|os|path|punycode|querystring|readline|repl|stream|string_decoder|sys|timers|tls|tty|url|util|vm|zlib|freelist|v8|process|async_hooks|http2|perf_hooks)(/.*|$)"
+          ],
+          ["^react", "^redux", "^@?\\w"],
+          ["^@pulse(/.*|$)"],
+          ["^@/"],
+          ["^#"],
+          ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+          ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+          ["^\\..*\\.s?css$"]
+        ]
+      }
+    ],
+    "check-file/folder-naming-convention": [
+      "error",
+      {
+        "**/*.*": "KEBAB_CASE"
+      }
+    ],
+    "check-file/filename-naming-convention": [
+      "error",
+      {
+        "**/*.*": "KEBAB_CASE"
+      },
+      {
+        "ignoreMiddleExtensions": true
+      }
+    ],
+    "check-file/filename-blocklist": [
+      "error",
+      {
+        "**/tsconfig.eslint.json": "*tsconfig.json"
+      },
+      {
+        "errorMessage": "\u0412\u043c\u0435\u0441\u0442\u043e tsconfig.eslint.json \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 languageOptions.parserOptions.projectService.allowDefaultProject \u0432 \u043a\u043e\u043d\u0444\u0438\u0433\u0435 eslint"
+      }
+    ]
+  }
+}

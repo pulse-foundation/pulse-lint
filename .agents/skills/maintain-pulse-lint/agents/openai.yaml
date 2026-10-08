@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Pulse Lint Maintenance'
+  short_description: 'Maintain shared presets, CLI and package contracts'
+  default_prompt: 'Use $maintain-pulse-lint to update the shared lint package and verify the installed archive.'

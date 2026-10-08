@@ -1,0 +1,99 @@
+{
+  "name": "@pulse/lint",
+  "version": "1.0.0",
+  "description": "Pulse linting and formatting configs",
+  "license": "GPL-3.0-only",
+  "author": "Pulse contributors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pulse-foundation/pulse-lint.git"
+  },
+  "bin": {
+    "pulse-lint": "./dist/cli/index.js"
+  },
+  "files": [
+    "/dist/**",
+    "/README.md",
+    "/LICENSE",
+    "/NOTICE",
+    "/docs/preset-comparison.md",
+    "/docs/toolchain-upgrade.md",
+    "/docs/unsupported-legacy-rules.json"
+  ],
+  "type": "module",
+  "exports": {
+    "./oxfmt": "./dist/oxfmt/index.json",
+    "./oxlint": "./dist/oxlint/index.json",
+    "./oxlint/best-practices": "./dist/oxlint/best-practices.json",
+    "./oxlint/imports": "./dist/oxlint/imports.json",
+    "./oxlint/node": "./dist/oxlint/node.json",
+    "./oxlint/react-a11y": "./dist/oxlint/react-a11y.json",
+    "./oxlint/react": "./dist/oxlint/react.json",
+    "./oxlint/typescript": "./dist/oxlint/typescript.json",
+    "./oxlint/variables": "./dist/oxlint/variables.json",
+    "./commitlint": "./dist/commitlint/index.js",
+    "./lefthook": "./dist/lefthook/index.yml",
+    "./tsconfig": "./dist/tsconfig.json",
+    "./oxlint/native": "./dist/oxlint/native.json",
+    "./oxlint/strict": "./dist/oxlint/strict.json",
+    "./oxlint/base": "./dist/oxlint/base.json",
+    "./oxlint/web": "./dist/oxlint/web.json",
+    "./oxlint/server": "./dist/oxlint/server.json",
+    "./oxlint/server-strict": "./dist/oxlint/server-strict.json",
+    "./oxlint/overlays/strict": "./dist/oxlint/overlays/strict.json"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "build": "node scripts/clean-dist.ts && tsc -p tsconfig.build.json && node scripts/prepare-dist.ts",
+    "prepack": "yarn build",
+    "typecheck": "tsc -p tsconfig.dev.json",
+    "test": "yarn build && yarn typecheck && yarn lint && yarn test:cli && yarn test:import-order && yarn test:native && yarn test:profiles && yarn test:strict && yarn test:app && yarn test:package",
+    "test:import-order": "node ./test/import-order.test.ts",
+    "test:native": "node --test ./test/native-lint.test.ts ./test/native-review.test.ts",
+    "test:strict": "node --test ./test/strict-lint.test.ts",
+    "test:package": "node --test ./test/package.test.ts",
+    "test:app": "node ./dist/cli/index.js oxlint ./test-app/src && node ./dist/cli/index.js oxfmt:check ./test-app",
+    "lint": "yarn lint:oxlint && yarn format:check",
+    "lint:oxlint": "oxlint -c .oxlintrc.json --deny-warnings ./src ./scripts ./test/*.test.ts ./test-app/src",
+    "lint:fix": "yarn lint:oxlint --fix && yarn format",
+    "format": "oxfmt -c ./oxfmt/index.json",
+    "format:check": "oxfmt --check -c ./oxfmt/index.json",
+    "commitlint": "commitlint --config ./dist/commitlint/index.js",
+    "lefthook:install": "lefthook install",
+    "test:profiles": "node --test ./test/profiles.test.ts",
+    "test:cli": "node --test ./test/cli.test.ts"
+  },
+  "dependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "eslint-plugin-check-file": "3.3.2",
+    "eslint-plugin-n": "18.4.1",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-simple-import-sort": "14.0.0",
+    "execa": "10.1.0",
+    "lefthook": "2.1.17",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
+    "oxlint-tsgolint": "7.0.2003"
+  },
+  "devDependencies": {
+    "@commitlint/types": "21.2.3",
+    "@types/eslint": "9.6.1",
+    "@types/estree": "1.0.9",
+    "@types/estree-jsx": "1.0.5",
+    "@types/node": "26.6.4",
+    "@types/react": "19.3.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  },
+  "commitlint": {
+    "extends": "./dist/commitlint/index.js"
+  },
+  "engines": {
+    "node": ">=24.13.1"
+  },
+  "packageManager": "yarn@4.18.1"
+}

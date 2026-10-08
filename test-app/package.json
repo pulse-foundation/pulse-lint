@@ -1,0 +1,14 @@
+{
+  "name": "pulse-lint-test-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "node ../dist/cli/index.js oxlint ./src",
+    "format": "node ../dist/cli/index.js oxfmt .",
+    "format:check": "node ../dist/cli/index.js oxfmt:check ."
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}

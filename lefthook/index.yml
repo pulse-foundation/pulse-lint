@@ -1,0 +1,12 @@
+# Consumer repositories use their installed binary; no package download or Bun dependency.
+pre-commit:
+  parallel: true
+  commands:
+    check-scripts:
+      glob: '*.{js,ts,jsx,tsx,mts,mjs,cjs,cts,ctsx,mtsx,cjsx,mjsx}'
+      run: PATH="$PWD/node_modules/.bin:$PATH"; export PATH; pulse-lint oxfmt {staged_files} && pulse-lint lint --max-warnings=20 {staged_files}
+      stage_fixed: true
+commit-msg:
+  commands:
+    commitlint:
+      run: PATH="$PWD/node_modules/.bin:$PATH"; export PATH; pulse-lint commitlint --edit {1}
