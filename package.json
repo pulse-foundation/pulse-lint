@@ -1,6 +1,6 @@
 {
   "name": "@pulse-kit/lint",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pulse linting and formatting configs",
   "license": "GPL-3.0-only",
   "author": "Pulse contributors",
