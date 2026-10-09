@@ -77,12 +77,33 @@ Folder naming now checks ordinary directories, including nested directories;
 previously its glob missed names such as `badFolder`. Base/web/server require
 kebab-case; native retains its custom Expo-aware naming rule. The inactive
 `tsconfig.eslint.json` blocklist has been removed because Oxlint does not lint JSON.
+Naming now uses the bundled TypeScript plugin `pulse-naming`; the external
+`eslint-plugin-check-file` dependency and its vulnerable `braces` chain are removed.
+If overriding those rules, use `pulse-naming/filename-naming-convention` and
+`pulse-naming/folder-naming-convention`. Both implement the shipped kebab-case
+policy without options; arbitrary check-file glob maps are not supported. Filename
+checks keep middle extensions (`name.test.ts`, `name.d.ts`) and skip dot paths;
+folder checks include hidden folders when Oxlint selects their files.
 
 Native React Compiler errors use Oxlint's built-in rules. `config` and `gating`
 are omitted because Oxlint uses fixed compiler options and does not expose gating.
 The `react-hooks` and `simple-import-sort` npm plugins are no longer dependencies.
 `eslint-plugin-n` stays: its `no-path-concat` catches `import.meta` cases missing
 from the built-in equivalent. See [upgrade notes](docs/toolchain-upgrade.md).
+
+## Development tests
+
+Tests use Vitest 5 with explicit `test`, `expect`, `beforeAll` and `afterAll` imports.
+Run `yarn test` for build, lint/format, TypeScript checking, all Vitest suites and
+app smoke checks; `yarn test:run` runs only Vitest and `yarn test:watch` watches changes.
+Targeted commands such as `yarn test:native`, `yarn test:naming` and `yarn test:package`
+use the same configuration. Vitest builds `dist` before the first run and each
+rerun, including runs from an IDE. Files execute sequentially because the archive
+suite rebuilds `dist`; independent native cases still run concurrently.
+
+The root `tsconfig.json` describes this repository and includes Node types for
+source, scripts and tests. The reusable consumer preset lives in `src/tsconfig/index.json`
+and is still published as `@pulse-kit/lint/tsconfig` → `dist/tsconfig.json`.
 
 ## Commands
 

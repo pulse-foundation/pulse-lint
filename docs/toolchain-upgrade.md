@@ -14,7 +14,6 @@ See the [official TypeScript 7 announcement](https://devblogs.microsoft.com/type
 | ---------------------------------- | ---------- |
 | `@commitlint/cli`                  | `21.2.3`   |
 | `@commitlint/config-conventional`  | `21.2.3`   |
-| `eslint-plugin-check-file`         | `3.3.2`    |
 | `eslint-plugin-n`                  | `18.4.1`   |
 | `eslint-plugin-react-hooks`        | `7.1.1`    |
 | `eslint-plugin-simple-import-sort` | `14.0.0`   |
@@ -63,8 +62,8 @@ bypass is configured. Recheck the registry when upgrading; these are dated value
 - CLI dispatch preserves separated option values and `--`. Native dispatch keeps
   its fixed warning policy. All subprocesses inherit stdin, so piped Commitlint
   messages terminate normally.
-- Regression tests understand current diagnostic names and both graphical and
-  agent output. File counts use explicit JSON output.
+- Regression tests understand current diagnostic names and graphical, agent and
+  GitHub Actions annotation output. File counts use explicit JSON output.
 
 ## Verification and release boundary
 
@@ -83,7 +82,7 @@ not hidden or replaced with unused runtime engines. All runtime exports, assets 
   unchanged, and run `oxfmt:check` as a required CI gate. The sorting algorithm is
   different; this is a consumer-visible migration, not exact formatting parity.
   [Oxfmt reference](https://oxc.rs/docs/guide/usage/formatter/config-file-reference#sortimports).
-- Folder naming now uses a directory glob (`**/`), with regression coverage for
+- Folder naming was expanded to ordinary directories (formerly the `**/` glob), with regression coverage for
   root and nested invalid directories and valid kebab-case paths. It can reject
   folders that previously slipped through. Native keeps its Expo-aware rule.
 - Removed `check-file/filename-blocklist`: its only target was JSON, which Oxlint
@@ -94,8 +93,9 @@ not hidden or replaced with unused runtime engines. All runtime exports, assets 
   configuration. [Oxc explanation](https://oxc.rs/blog/2026-08-18-react-compiler-support).
   These examples establish covered behavior, not universal engine equivalence.
 - Removed runtime dependencies `eslint-plugin-react-hooks` and
-  `eslint-plugin-simple-import-sort`. Keep `eslint-plugin-check-file`,
-  `eslint-plugin-n` and the Pulse plugin for checks not fully covered natively.
+  `eslint-plugin-simple-import-sort`. `eslint-plugin-check-file` was subsequently
+  replaced by the bundled `pulse-naming` TypeScript plugin, removing micromatch
+  and braces. Keep `eslint-plugin-n` and the Pulse plugins for remaining checks.
   In particular, installed native `node/no-path-concat` misses concatenation of
   `import.meta.dirname` / `import.meta.url`, while `n/no-path-concat` catches it.
 
@@ -105,3 +105,17 @@ imports enter the commit and unrelated unstaged edits remain untouched. The pack
 consumer checks directory naming, formatter sorting and built-in compiler errors.
 Root `.prettierignore` excludes deliberately invalid/unsorted test fixtures from
 repository-wide formatting; consumer formatting still uses the shipped preset.
+
+## Vitest and naming migration — 2026-10-09
+
+All test suites now use Vitest 5.0.3 and its `expect` API. Vite 8.3.3 is the newest
+version accepted by the 24-hour age gate during this change; 8.3.4 was quarantined.
+The Node environment, bounded concurrency, build setup and explicit fixture exclusions
+are shared by local, IDE and CI runs. The native diagnostic parser handles GitHub
+annotations explicitly; negative lint fixtures continue to assert actual rejection.
+
+The new `pulse-naming` plugin implements the two previously shipped kebab-case
+checks without a glob library. The naming matrix covers 32 paths per base/web/server
+profile, including dot paths, digits, middle extensions and Expo-style names.
+Native keeps its separate Expo-aware rule. Rule overrides must use `pulse-naming/*`
+instead of `check-file/*`; the new rules have no arbitrary glob-map options.

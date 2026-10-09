@@ -1,0 +1,30 @@
+{
+  "plugins": ["typescript", "unicorn", "oxc", "import"],
+  "extends": ["./base.json", "./node.json"],
+  "jsPlugins": ["./plugins/pulse-naming.js", "eslint-plugin-n"],
+  "env": {
+    "node": true,
+    "browser": false
+  },
+  "rules": {
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "isFinite",
+        "message": "Use Number.isFinite instead https://github.com/airbnb/javascript#standard-library--isfinite"
+      },
+      {
+        "name": "isNaN",
+        "message": "Use Number.isNaN instead https://github.com/airbnb/javascript#standard-library--isnan"
+      },
+      {
+        "name": "window",
+        "message": "Browser globals are not available in server code."
+      },
+      {
+        "name": "document",
+        "message": "Browser globals are not available in server code."
+      }
+    ]
+  }
+}

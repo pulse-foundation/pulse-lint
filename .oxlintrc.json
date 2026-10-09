@@ -1,8 +1,8 @@
 {
-  "extends": ["./oxlint/index.json"],
+  "extends": ["./dist/oxlint/index.json"],
   "overrides": [
     {
-      "files": ["src/cli/**", "test/*.test.ts"],
+      "files": ["src/cli/**", "tests/**/*.test.ts"],
       "rules": {
         "no-console": "off"
       }
@@ -14,7 +14,7 @@
       }
     },
     {
-      "files": ["test/*.test.ts"],
+      "files": ["tests/**/*.test.ts"],
       "rules": {
         "max-lines": "off"
       }

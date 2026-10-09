@@ -109,20 +109,17 @@ been completed by these local file changes; organization 2FA enforcement still
 needs confirmation.
 Resolve the plan/visibility choice before treating branch protections as enforced.
 
-## Current security blocker
+## Dependency security
 
-`yarn audit:dependencies` reports high severity
-[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) in
-`braces@3.0.3`, reached through `eslint-plugin-check-file → micromatch → braces`.
-The advisory lists no patched version as of this review. Crafted deeply nested
-glob patterns can exhaust the stack. This is not evidence of package takeover.
+The previously reported high-severity
+[GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) reached
+`braces@3.0.3` through `eslint-plugin-check-file → micromatch → braces`.
+The external naming plugin has been removed and replaced by two bundled TypeScript
+rules with regression coverage. That dependency chain is no longer in the lockfile;
+the audit still blocks releases on new high-severity findings, without suppression.
 
-The audit has no suppression and blocks release before the OIDC job. A follow-up
-must either adopt a verified upstream fix or replace the dependency with tested
-naming checks. Do not globally ignore high-severity findings or pretend a clean
-functional test suite clears a security advisory. Also check the installed consumer
-dependency graph: this package's development lockfile does not freeze every
-transitive resolution in other repositories.
+Run a fresh audit before each release. This package's development lockfile does
+not freeze every transitive resolution in consumer repositories.
 
 ## Local verification without publication
 

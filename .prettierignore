@@ -1,3 +1,5 @@
-# Deliberately invalid or unsorted lint fixtures; tests format temporary copies.
-test/*-fixture/
-test/import-order/
+# Deliberately invalid or unsorted fixtures; tests format temporary copies.
+tests/fixtures/native-app/
+tests/fixtures/compiler/
+tests/fixtures/web-invalid/
+tests/fixtures/import-order/

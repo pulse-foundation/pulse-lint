@@ -5,5 +5,5 @@
 /package.json @reabiliti
 /yarn.lock @reabiliti
 /.yarnrc.yml @reabiliti
-/test/package.test.ts @reabiliti
+/tests/integration/package.test.ts @reabiliti
 /docs/releasing.md @reabiliti

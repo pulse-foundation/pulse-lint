@@ -1,2 +1,0 @@
-# Lint fixtures are not Nx projects (no typecheck target, no root tsconfig reference).
-native-fixture

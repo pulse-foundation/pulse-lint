@@ -42,7 +42,7 @@ belong to VPN. Applying them to Chat would require an unrelated restructuring.
 The strict preset imports the size limits and test exemptions, not this layout.
 
 The strict preset composes the supported web profile extracted from Chat with the framework-neutral
-`oxlint/overlays/strict.json` layer. `server-strict` applies that same layer to
+`src/oxlint/overlays/strict.json` layer. `server-strict` applies that same layer to
 the Node server profile; `oxlint/node` remains only a rule module.
 The strict CLI commands additionally reject warnings and unused disable directives.
 The web strict preset extends the package's web preset. It is not a replacement preserving

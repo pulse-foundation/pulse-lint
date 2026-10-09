@@ -17,8 +17,8 @@ are the CLI commands, exported presets and documented config paths.
 ## Repository constraints
 
 - Keep one package until a concrete need for independent distribution or release
-  cycles justifies workspaces. `test-app` and `test/*-fixture` are fixtures.
-- Author executable code in TypeScript under `src/`. Build output belongs in
+  cycles justifies workspaces. `tests/fixtures/*` are fixtures.
+- Keep all consumer sources under `src/`: TypeScript code plus JSON/YAML presets. Build output belongs in
   ignored `dist/`; copy JSON/YAML presets there in their tool's native format.
   All public runtime exports and CLI config paths must resolve inside `dist/`.
 - Keep reusable rule modules, environment profiles and policy overlays distinct.
@@ -29,6 +29,8 @@ are the CLI commands, exported presets and documented config paths.
 - Treat changes to preset severity, warning gates, public paths and CLI behavior
   as compatibility changes. Update the relevant documentation and regression
   coverage with the change.
+- Tests use Vitest with explicit imports. Root `tsconfig.json` is the editor/dev
+  project; `src/tsconfig/index.json` is the consumer preset copied to `dist/tsconfig.json`.
 - Root `.oxlintrc.json` controls this repository's own linting. Its exceptions
   must not silently weaken presets shipped to consumers.
 - Some fixtures are deliberately invalid or incorrectly formatted. Change only

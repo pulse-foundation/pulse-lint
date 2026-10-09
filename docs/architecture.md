@@ -20,7 +20,7 @@ This is a recommendation based on the current package boundary, not a general
 argument against monorepos. [Yarn documents workspaces](https://yarnpkg.com/features/workspaces)
 for multiple packages, add-ons and dependency isolation. None of those currently
 requires splitting this small toolkit. A substantial docs application could be
-a private workspace later; the existing `test-app` has no such requirement.
+a private workspace later; the existing `tests/fixtures/web-app` has no such requirement.
 
 Explicit [Node subpath exports](https://nodejs.org/api/packages.html#subpath-exports)
 give each preset a public name without a separate package. A useful comparison
@@ -32,38 +32,67 @@ packaging example, not a proposal to adopt its lint engine or dependencies.
 
 ```text
 pulse-lint/
-  src/
-    cli/                    # commands, subprocess argv, native dispatch
-    oxlint/plugins/         # custom rules, compiled before use
-    commitlint/             # executable commit-message config
-  oxlint/                   # source JSON profiles and rule modules
-    rules/                  # internal shared rule modules
-    overlays/               # framework-neutral policy overlays
-  oxfmt/                    # source formatter JSON
-  lefthook/                 # source consumer hook preset
-  tsconfig.json             # source standalone TypeScript base
-  tsconfig.build.json       # internal compiler settings
-  tsconfig.dev.json         # internal source/test type checking
-  scripts/                  # build maintenance, not consumer runtime
-  test/                     # TS harnesses plus intentional input fixtures
-  test-app/                 # small web integration fixture
-  dist/                     # complete runtime output: JS, types, configs; gitignored
-  docs/                     # maintained decisions and migration context
-  AGENTS.md                 # short always-on repository instructions
-  .agents/skills/            # task-specific workflows loaded on demand
-  package.json              # exports, bin, files, scripts and tool versions
-  yarn.lock                 # reproducible development/CI resolutions
+  src/                       # all published package sources
+    cli/                     # commands, argv and project dispatch
+    commitlint/              # executable commit-message config
+    oxlint/                  # JSON profiles, modules and policy overlays
+      rules/
+      overlays/
+      plugins/               # custom TypeScript rules
+    oxfmt/index.json          # consumer formatter preset
+    lefthook/index.yml        # consumer hook preset
+    tsconfig/index.json      # independent consumer TypeScript base
+  tests/
+    unit/                    # pure logic, no tool processes
+    integration/             # CLI, lint, hooks, archive and release checks
+    fixtures/                # inputs; never discovered as test suites
+      web-app/               # positive web application fixture
+      native-app/            # native application with valid and invalid cases
+      compiler/              # React Compiler cases
+      web-invalid/           # isolated a11y violations
+      import-order/          # intentionally unsorted imports
+    helpers/                 # shared test utilities and repository paths
+    setup.ts                 # build before initial test runs and reruns
+    README.md                # testing conventions
+  scripts/                   # build and release maintenance
+  dist/                      # generated JS, declarations and config assets
+  docs/                      # architecture, migration and release guidance
+  .github/                   # CI and ownership
+  .changeset/                # version notes and Changesets configuration
+  .agents/skills/            # maintenance workflow
+  AGENTS.md                  # repository instructions
+  .oxlintrc.json             # this repository's lint policy
+  lefthook.yml               # this repository's Git hooks
+  tsconfig.json              # editor and development type checking
+  tsconfig.build.json        # compiler settings for dist
+  vitest.config.ts           # test discovery and execution
+  package.json               # manifest, public exports and commands
+  yarn.lock                  # pinned dependency resolutions
 ```
 
-Root JSON/YAML directories hold source assets. The build copies them into `dist`
-alongside compiled TypeScript. Consumers use exported names or documented paths
+All consumer presets and executable sources live under `src/`. The build copies
+only JSON/YAML assets into `dist` alongside compiled JavaScript and declarations;
+TypeScript implementation sources are never copied. The one deliberate layout
+mapping is `src/tsconfig/index.json` → `dist/tsconfig.json`, preserving the public path. Consumers use exported names or documented paths
 under `node_modules/@pulse-kit/lint/dist`; source directories are not published.
 Config-relative references are authored for the built layout, so native linting
 uses the built preset rather than the source JSON.
 
+The root `tsconfig.json` provides Node types and includes only development sources
+and test harnesses, keeping deliberately invalid fixtures out of type checking.
+The consumer preset remains independent under `src/tsconfig/index.json`.
+
+Repository tool configs stay at the root where editors and tools discover them.
+`tests/fixtures` is excluded from the root TypeScript project and test discovery;
+format ignores cover only deliberately invalid fixtures, so the positive web app
+remains checked. Fixtures are neither packages to publish nor Yarn workspaces.
+
 The root `lefthook.yml` and `.oxlintrc.json` are for developing this repository;
-`lefthook/index.yml` and `oxlint/*.json` are consumer-facing presets. Fixtures are
-not deployable applications or workspaces. If the custom plugin becomes too large,
+`src/lefthook/index.yml` and `src/oxlint/*.json` are consumer-facing presets. Fixtures are
+not deployable applications or workspaces. Self-linting extends the built default
+preset; `yarn lint` builds first. Vitest builds before initial and repeated runs,
+and serializes files because the archive test rebuilds that same output.
+If a custom plugin becomes too large,
 split its rules into focused source modules while retaining the compiled entry.
 
 ## Build and published contracts
@@ -90,7 +119,8 @@ Compatibility has two forms here:
   A Node export alias does not repair a changed filesystem path for these tools.
 
 Oxlint [resolves JS plugin specifiers relative to their config](https://oxc.rs/docs/guide/usage/linter/js-plugins.html).
-The built `dist/oxlint/native.json` points to `./plugins/pulse-native.js`. Moving either
+Built base/web/server presets point to `./plugins/pulse-naming.js`;
+`dist/oxlint/native.json` additionally points to `./plugins/pulse-native.js`. Moving either
 side requires checking that link in the installed archive, not only the source tree.
 Archive tests enforce that every export, binary and relative config/plugin reference
 exists inside `dist`, with no runtime config directories at package root.
